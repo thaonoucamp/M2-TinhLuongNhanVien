@@ -4,41 +4,51 @@ import management_officers.creat.Engineer;
 import management_officers.creat.Person;
 import management_officers.creat.Staff;
 import management_officers.creat.Worker;
+import management_officers.file_IO.FileIO;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class ManagementOfficers implements Function {
+public class ManagementOfficers implements Function<Person>, Serializable {
+    FileIO fileIO = new FileIO();
+
+    String filePath = "/Users/thaodangxuan/IdeaProjects/M2-Manage-Nhanvien/src/management_officers/file_IO/Management_Officers.dat";
+
+    public List<Person> listOfficers = (ArrayList<Person>) fileIO.readFromFile(filePath) == null ? new ArrayList<>() : (ArrayList<Person>) fileIO.readFromFile(filePath);
+
     Scanner sc = new Scanner(System.in);
 
-    List<Person> listOfficers = new ArrayList<>();
-
-
     @Override
-    public void edit(List<?> list) {
+    public void edit(List<Person> list) {
+//        System.out.println("Enter the id want to edit");
+//        String id = sc.nextLine();
 
+        for (int i = 0; i < list.size(); i++) {
+            
+        }
     }
 
     @Override
-    public void delete(List<?> list) {
+    public void delete(List<Person> list) {
 
     }
 
     @Override
     public void show(List<Person> list) {
         for (int i = 0; i < list.size(); i++) {
-            list.get(i).toString();
+            System.out.println(list.get(i));
         }
     }
 
     @Override
-    public void find(List<?> list) {
+    public void find(List<Person> list) {
 
     }
 
     @Override
-    public void sort(List<?> list) {
+    public void sort(List<Person> list) {
 
     }
 
@@ -60,7 +70,11 @@ public class ManagementOfficers implements Function {
 
             switch (choice) {
                 case 1:
-                    addOfficers(listOfficers);
+                    try {
+                        addOfficers(listOfficers);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case 2:
                     edit(listOfficers);
@@ -82,15 +96,20 @@ public class ManagementOfficers implements Function {
     }
 
     @Override
-    public void addOfficers(List<Person> list) {
-        list.add((Person) addEngineer());
-        list.add((Person) addWorker());
-        list.add((Person) addStaff());
+    public void addOfficers(List<Person> list) throws Exception {
+        fileIO.readFromFile(filePath);
+
+        list.addAll(addEngineer());
+        list.addAll(addWorker());
+        list.addAll(addStaff());
 
         show(list);
+        fileIO.writeObjectToFile(list, filePath);
     }
 
-    public List<Engineer> addEngineer() {
+    public List<Engineer> addEngineer() throws Exception {
+        fileIO.readFromFile(filePath);
+
         List<Engineer> list = new ArrayList<>();
         System.out.println("Enter quantity want to add");
         int quantity = Integer.parseInt(sc.nextLine());
@@ -99,10 +118,13 @@ public class ManagementOfficers implements Function {
             System.out.println("Enter index engineer " + (i + 1));
             list.add(inputEngineer());
         }
+        fileIO.writeObjectToFile(list, filePath);
         return list;
     }
 
-    public List<Staff> addStaff() {
+    public List<Staff> addStaff() throws Exception {
+        fileIO.readFromFile(filePath);
+
         List<Staff> list = new ArrayList<>();
         System.out.println("Enter quantity want to add");
         int quantity = Integer.parseInt(sc.nextLine());
@@ -110,10 +132,14 @@ public class ManagementOfficers implements Function {
             System.out.println("Enter index staff " + (i + 1));
             list.add(inputStaff());
         }
+
+        fileIO.writeObjectToFile(list, filePath);
         return list;
     }
 
-    public List<Worker> addWorker() {
+    public List<Worker> addWorker() throws Exception {
+        fileIO.readFromFile(filePath);
+
         List<Worker> list = new ArrayList<>();
         System.out.println("Enter quantity want to add");
         int quantity = Integer.parseInt(sc.nextLine());
@@ -121,6 +147,7 @@ public class ManagementOfficers implements Function {
             System.out.println("Enter index worker " + (i + 1));
             list.add(inputWorker());
         }
+        fileIO.writeObjectToFile(list, filePath);
         return list;
     }
 
@@ -142,7 +169,7 @@ public class ManagementOfficers implements Function {
         System.out.println("Enter the wage");
         staff.setWage(sc.nextLine());
 
-        return staff;
+        return  staff;
     }
 
     public Worker inputWorker() {
